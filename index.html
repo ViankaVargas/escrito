@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Números Ordinales</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #111;
+            color: #fff;
+        }
+
+        #juego-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #111;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            color: #ff0000;
+        }
+
+        #palabra {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #ff0000;
+            animation: neon-blink 1s infinite alternate;
+        }
+
+        #respuesta {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            background-color: #040404;
+            color: #0000ff;
+            border: 2px solid #0000ff;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+            width: 80%;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #ff0000;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 16px;
+            background-color: #0000ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 80%;
+            box-sizing: border-box;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        button:hover {
+            background-color: #000099;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .correcto {
+            color: #00ff00;
+        }
+
+        .incorrecto {
+            color: #ff0000;
+        }
+
+        @keyframes neon-blink {
+            from {
+                text-shadow: none;
+            }
+            to {
+                text-shadow: 2px 2px 4px rgba(255, 0, 0, 0.7);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="juego-container">
+        <h1>Números Ordinales</h1>
+        <div id="palabra"></div>
+        <div id="respuesta">
+            <input type="text" id="inputRespuesta" placeholder="Ingresa tu respuesta">
+            <button onclick="verificarRespuesta()">Verificar</button>
+            <p id="resultado"></p>
+        </div>
+    </div>
+
+    <script>
+        var palabrasConRespuestas = [
+            { palabra: "1°", respuesta: "primero" },
+            { palabra: "2°", respuesta: "segundo" },
+            { palabra: "3°", respuesta: "tercero" },
+            { palabra: "4°", respuesta: "cuarto" },
+            { palabra: "5°", respuesta: "quinto" },
+            { palabra: "6°", respuesta: "sexto" },
+            { palabra: "7°", respuesta: "sétimo" },
+            { palabra: "8°", respuesta: "octavo" },
+            { palabra: "9°", respuesta: "noveno" },
+            { palabra: "10°", respuesta: "décimo" }
+        ];
+
+        var palabraElemento = document.getElementById("palabra");
+        var inputRespuesta = document.getElementById("inputRespuesta");
+        var resultadoElemento = document.getElementById("resultado");
+        var button = document.querySelector("button");
+
+        var preguntasRealizadas = [];
+
+        function obtenerPalabraAleatoria() {
+            var palabrasDisponibles = palabrasConRespuestas.filter(function (palabra) {
+                return !preguntasRealizadas.includes(palabra.palabra);
+            });
+
+            var indice = Math.floor(Math.random() * palabrasDisponibles.length);
+            return palabrasDisponibles[indice];
+        }
+
+        function iniciarJuego() {
+            var palabraActual = obtenerPalabraAleatoria();
+
+            if (palabraActual) {
+                palabraElemento.textContent = palabraActual.palabra;
+                resultadoElemento.textContent = "";
+                resultadoElemento.className = "";
+                preguntasRealizadas.push(palabraActual.palabra);
+            } else {
+                palabraElemento.textContent = "¡Juego completado!";
+                inputRespuesta.style.display = "none";
+                button.style.display = "none";
+            }
+        }
+
+        function verificarRespuesta() {
+            var palabraActual = palabraElemento.textContent.toLowerCase();
+            var respuestaIngresada = inputRespuesta.value.toLowerCase();
+
+            if (!respuestaIngresada) {
+                resultadoElemento.textContent = "Debes ingresar una respuesta";
+                resultadoElemento.className = "incorrecto";
+                return;
+            }
+
+            if (respuestaIngresada === palabrasConRespuestas.find(p => p.palabra === palabraActual).respuesta) {
+                resultadoElemento.textContent = "Correcto";
+                resultadoElemento.className = "correcto";
+            } else {
+                resultadoElemento.textContent = "Incorrecto";
+                resultadoElemento.className = "incorrecto";
+            }
+
+            setTimeout(function () {
+                iniciarJuego();
+                inputRespuesta.value = "";
+                resultadoElemento.textContent = "";
+                resultadoElemento.className = "";
+            }, 2000);
+        }
+
+        window.onload = function () {
+            iniciarJuego();
+            document.getElementById("inputRespuesta").focus();
+        };
+    </script>
+
+</body>
+</html>
